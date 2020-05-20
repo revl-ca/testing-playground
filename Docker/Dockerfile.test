@@ -1,0 +1,24 @@
+#
+# Base image
+#
+ARG DOCKER_IMAGE_NAME
+ARG DOCKER_IMAGE_TAG
+FROM $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG AS base
+
+#
+# Tool
+#
+FROM base AS tool
+
+RUN curl -fsSL https://goss.rocks/install | sh
+
+#
+# Final image
+#
+FROM base AS final
+
+WORKDIR /test
+
+COPY --from=tool /usr/local/bin/goss /usr/local/bin/goss
+ADD ./test/spec.yml .
+
